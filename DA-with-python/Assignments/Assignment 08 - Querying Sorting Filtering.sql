@@ -5,6 +5,9 @@
 --             DISTINCT, AND / OR
 -- ============================================================
 
+USE BikeStores;
+GO
+
 
 -- ============================================================
 --  Question 1 — SELECT & WHERE
@@ -14,6 +17,11 @@
 -- ============================================================
 
 -- Write your query below:
+
+SELECT first_name, last_name, city, phone
+FROM sales.customers
+WHERE state = 'CA'
+  AND phone IS NOT NULL;
 
 
 
@@ -27,6 +35,10 @@
 -- ============================================================
 
 -- Write your query below:
+
+SELECT product_id, product_name, model_year, list_price
+FROM production.products
+ORDER BY model_year DESC, list_price ASC;
 
 
 
@@ -42,8 +54,20 @@
 
 -- Part a:
 
+SELECT TOP 5 product_name, list_price
+FROM production.products
+ORDER BY list_price DESC;
+
 
 -- Part b:
+
+SELECT TOP 5 PERCENT *
+FROM production.products
+ORDER BY list_price ASC;
+
+-- Row count: 17 rows
+-- (321 products in the table, 5% of 321 = 16.05, and TOP PERCENT
+-- always rounds up so we get 17)
 
 
 
@@ -60,11 +84,32 @@
 
 -- Page 1:
 
+SELECT product_id, product_name, list_price
+FROM production.products
+ORDER BY list_price DESC, product_id
+OFFSET 0 ROWS
+FETCH NEXT 10 ROWS ONLY;
+
 
 -- Page 2:
 
+SELECT product_id, product_name, list_price
+FROM production.products
+ORDER BY list_price DESC, product_id
+OFFSET 10 ROWS
+FETCH NEXT 10 ROWS ONLY;
+
 
 -- Page 3:
+
+SELECT product_id, product_name, list_price
+FROM production.products
+ORDER BY list_price DESC, product_id
+OFFSET 20 ROWS
+FETCH NEXT 10 ROWS ONLY;
+
+-- product_id is added to ORDER BY so that products with the same
+-- price always come in the same order and don't repeat across pages
 
 
 
@@ -82,11 +127,28 @@
 
 -- Part a:
 
+SELECT DISTINCT state
+FROM sales.customers
+ORDER BY state;
+
 
 -- Part b:
 
+SELECT DISTINCT state, city
+FROM sales.customers
+ORDER BY state, city;
+
 
 -- Part c:
+
+-- the distinct values
+SELECT DISTINCT model_year
+FROM production.products
+ORDER BY model_year;
+
+-- and the count
+SELECT COUNT(DISTINCT model_year) AS unique_model_years
+FROM production.products;
 
 
 
@@ -103,3 +165,9 @@
 -- ============================================================
 
 -- Write your query below:
+
+SELECT product_id, product_name, brand_id, category_id, list_price
+FROM production.products
+WHERE list_price BETWEEN 500 AND 1500
+  AND (model_year = 2019 OR model_year = 2020)
+ORDER BY list_price ASC;
